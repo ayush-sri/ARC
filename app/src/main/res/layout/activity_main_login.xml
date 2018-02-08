@@ -1,0 +1,145 @@
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:id="@+id/ll1"
+    android:background="@drawable/background"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/welcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="90dp"
+        android:fontFamily="@font/oswald"
+        android:gravity="center_horizontal"
+        android:shadowColor="#40000000"
+        android:shadowDx="0"
+        android:shadowDy="4"
+        android:shadowRadius="4"
+        android:text="@string/welcome"
+        android:textColor="#fff"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/login_or_re"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/welcome"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:fontFamily="@font/oswald"
+        android:gravity="center_horizontal"
+        android:text="@string/login_or_re"
+        android:textColor="#fff"
+        android:textSize="16sp"/>
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:layout_below="@+id/login_or_re"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/edittext"
+        android:fontFamily="@font/oswald"
+        android:textAlignment="center"
+        android:hint="@string/Email"
+        android:textSize="12sp"
+        android:clickable="false"
+        android:focusable="true"
+        android:id="@+id/username"
+        android:singleLine="true"
+        android:textColor="#fff"
+        android:inputType="text|textEmailAddress"
+        android:textColorHint="#fff" />
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:textColor="#fff"
+        android:layout_below="@+id/username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/edittext"
+        android:fontFamily="@font/oswald"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:focusable="true"
+        android:id="@+id/passwd"
+        android:singleLine="true"
+        android:hint="@string/passwd"
+        android:inputType="textPassword"
+        android:textColorHint="#fff" />
+    <Button
+        android:layout_width="140dp"
+        android:layout_height="40dp"
+        android:layout_alignStart="@+id/passwd"
+        android:layout_below="@+id/passwd"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/button"
+        android:fontFamily="@font/oswald"
+        android:text="@string/login"
+        android:textColor="#fff"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        android:id="@+id/login" />
+
+    <View
+        android:layout_width="20dp"
+        android:layout_height="130dp"
+        android:layout_below="@+id/passwd"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/line"
+        android:rotation="90" />
+    <Button
+        android:id="@+id/reg"
+        android:layout_width="140dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/passwd"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="45dp"
+        android:layout_toEndOf="@+id/login"
+        android:background="@drawable/button"
+        android:fontFamily="@font/oswald"
+        android:text="@string/reg"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        android:textSize="14sp" />
+      <LinearLayout
+          android:layout_width="318dp"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/login"
+          android:layout_alignParentEnd="true"
+          android:orientation="vertical"
+          android:id="@+id/linearLayout">
+
+          <TextView
+              android:id="@+id/frgt"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:clickable="true"
+              android:focusable="true"
+              android:layout_marginLeft="7dp"
+              android:paddingTop="10dp"
+              android:fontFamily="@font/oswald"
+              android:text="@string/forgt"
+              android:textColor="#fff"
+              android:textSize="16sp" />
+
+
+    <CheckBox
+        android:id="@+id/ctv"
+        style="@android:style/Widget.Holo.Light.CompoundButton.CheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/frgt"
+        android:checked="false"
+        android:fontFamily="@font/oswald"
+        android:text="Login as CR"
+        android:textColor="#fff"/>
+      </LinearLayout>
+</RelativeLayout>

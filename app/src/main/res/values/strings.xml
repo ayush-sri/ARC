@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">ARC</string>
+    <string name="welcome">WELCOME</string>
+    <string name="login_or_re">LOGIN OR REGISTER TO CONTINUE</string>
+    <string name="Email">EMAIL OR USERNAME</string>
+    <string name="passwd">PASSWORD</string>
+    <string name="login">LOGIN</string>
+    <string name="reg">REGISTER</string>
+    <string name="forgt">forgot password ?</string>
+    <string name="createAccount">CREATE ACCOUNT</string>
+    <string name="name">YOUR NAME</string>
+    <string name="roll">ROLL NUMBER</string>
+    <string name="group">GROUP</string>
+    <string name="branch">BRANCH</string>
+    <string name="prompt">Please Select Branch</string>
+    <string name="prompt2">Please Select Semester</string>
+    <string name="Email2">YOUR EMAIL</string>
+    <string name="prompt3">Please Select Group</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
