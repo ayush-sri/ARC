@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#f72727</color>
     <color name="colorCust">#862dfa</color>
+    <color name="groupCol">#d667cd</color>
+
 </resources>

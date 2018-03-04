@@ -14,9 +14,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 import java.text.SimpleDateFormat;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -38,16 +43,6 @@ public class MainActivity extends AppCompatActivity
         }
         setFragment(new dataFragment());//init
 
-
-    }
-
-   @Override
-    protected void onSaveInstanceState(Bundle outState) {
-       super.onSaveInstanceState(outState);
-          long date = System.currentTimeMillis();
-       SimpleDateFormat sdf =new SimpleDateFormat("dd MMM,yyyy");
-        String dateString =sdf.format(date);
-        outState.putString("dateString",dateString);
     }
     @Override
     public void onBackPressed() {
@@ -146,5 +141,4 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
-
 }
