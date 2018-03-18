@@ -64,13 +64,13 @@
                     />
             </LinearLayout>
             </LinearLayout>
-            <fragment
-                android:name="com.example.ayushsrivastava.arc.ExpList"
-                android:layout_width="match_parent"
-                android:layout_height="450dp"
-                android:layout_marginTop="40dp"
-                android:id="@+id/explist">
-            </fragment>
+                <fragment
+                    android:name="com.example.ayushsrivastava.arc.ExpList"
+                    android:layout_width="match_parent"
+                    android:layout_height="650dp"
+                    android:layout_marginTop="40dp"
+                    android:id="@+id/explist">
+                </fragment>
         </LinearLayout>
     </ScrollView>
 

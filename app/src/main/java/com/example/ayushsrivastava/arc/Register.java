@@ -1,47 +1,63 @@
 package com.example.ayushsrivastava.arc;
 
-import android.annotation.SuppressLint;
+
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.os.Build;
-import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.TypedValue;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
+import com.firebase.client.Firebase;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 
-import static android.widget.Toast.LENGTH_SHORT;
 
 public class Register extends AppCompatActivity {
-
+    private Button register;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+    private ProgressDialog progessDialogue;
+    private CheckBox chkbk;
+    private Intent i;
+    private EditText name;
+    Firebase users,password,RollNum,Branchbase,Group,Email,Status;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        Intent i = getIntent();
-        final EditText name = (EditText)findViewById(R.id.name);
+        progessDialogue = new ProgressDialog(this);
+        firebaseAuth=FirebaseAuth.getInstance();
+        i=getIntent();
+        chkbk = (CheckBox)findViewById(R.id.ctvReg);
+        users = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Users");
+        Email = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Email");
+        password =new Firebase("https://arc-artificial-cr-a.firebaseio.com/Password");
+        RollNum = new Firebase("https://arc-artificial-cr-a.firebaseio.com/RollNum");
+        Branchbase = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Branch");
+        Group = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Group");
+        Status = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Status");
+        //final Button register;
+        name = (EditText)findViewById(R.id.name);
         final EditText Rollnum=(EditText)findViewById(R.id.rollNum);
         final EditText email =(EditText)findViewById(R.id.email);
         final EditText passwd = (EditText)findViewById(R.id.passwd);
-        final Button register = (Button)findViewById(R.id.register);
+        register = (Button)findViewById(R.id.register);
         hideKeyboard(passwd);
         hideKeyboard(name);
         hideKeyboard(Rollnum);
@@ -109,7 +125,7 @@ public class Register extends AppCompatActivity {
                     });
                     register.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View view) {
+                        public void onClick(final View view) {
                             String n = name.getText().toString().trim();
                             String Pass = passwd.getText().toString().trim();
                             String Roll = Rollnum.getText().toString().trim();
@@ -141,12 +157,53 @@ public class Register extends AppCompatActivity {
                                 Toast.makeText(Register.this, "Please Select Semester & Group", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-                            else
-                            {
-                                Intent i;
+                            else {
+
+                                if(Roll.length()<15) {
+                                    Rollnum.setError("Invalid Roll Number !");
+                                    Rollnum.requestFocus();
+                                }
+                                if(Pass.length()<8) {
+                                    passwd.setError("Password Should be atleast 8 characters long !");
+                                    passwd.requestFocus();
+                                }
+                                users.push().setValue(name.getText().toString());
+                                Email.push().setValue(email.getText().toString());
+                                password.push().setValue(passwd.getText().toString());
+                                RollNum.push().setValue(Rollnum.getText().toString());
+                                Branchbase.push().setValue(Branch.getSelectedItem().toString());
+                                Group.push().setValue(grp.getSelectedItem().toString());
+                                Status.push().setValue(CheckStatus());
+                                progessDialogue.setMessage("Please Wait.....");
+                                progessDialogue.show();
+                                firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), passwd.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if(task.isSuccessful()) {
+                                            progessDialogue.dismiss();
+                                            if(task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                                Toast.makeText(Register.this, "Already Registered !", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                            Toast.makeText(Register.this, "Registered Successfully !", Toast.LENGTH_LONG).show();
+                                            i = new Intent(view.getContext(),MainActivity.class);
+                                            i.putExtra("username",name.getText().toString().trim());
+                                            i.putExtra("Email",email.getText().toString().trim());
+                                            startActivity(i);
+                                            finish();
+                                        }
+                                        else
+                                        {
+                                            progessDialogue.dismiss();
+                                            Toast.makeText(Register.this, "Some Error Occurred !", Toast.LENGTH_LONG).show();
+
+                                    }}
+                                });
+
+                                /*Intent i;
                                 i = new Intent(view.getContext(),MainActivity.class);
                                 startActivity(i);
-                                finish();
+                                finish();*/
                             }
 
                         }
@@ -181,6 +238,12 @@ public class Register extends AppCompatActivity {
                         startActivity(ii);
                     }
                 }).create().show();
+    }
+    String CheckStatus()
+    {
+        if(chkbk.isChecked())
+          return name.getText().toString()+" : CR";
+        else return null;
     }
 
 

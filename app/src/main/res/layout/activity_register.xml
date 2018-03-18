@@ -175,4 +175,13 @@
         android:fontFamily="@font/oswald"
         android:text="Register as CR"
         android:textColor="#fff" />
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Email Verified !"
+        android:checkMark="@drawable/ic_action_check"
+        android:textAlignment="center"
+        android:textColor="#f53535"
+        android:visibility="gone"
+        android:id="@+id/cktv"/>
 </LinearLayout>

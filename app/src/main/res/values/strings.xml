@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">ARC</string>
-    <string name="welcome">WELCOME</string>
+    <string name="welcome">USER LOGIN</string>
     <string name="login_or_re">LOGIN OR REGISTER TO CONTINUE</string>
-    <string name="Email">EMAIL OR USERNAME</string>
+    <string name="Email">YOUR EMAIL</string>
     <string name="passwd">PASSWORD</string>
     <string name="login">LOGIN</string>
     <string name="reg">REGISTER</string>

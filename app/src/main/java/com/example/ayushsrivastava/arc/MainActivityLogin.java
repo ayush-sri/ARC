@@ -2,38 +2,46 @@ package com.example.ayushsrivastava.arc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
+
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static android.graphics.Color.BLACK;
-import static android.graphics.Color.isSrgb;
-import static android.graphics.Color.red;
-import static android.graphics.Color.rgb;
-import static android.graphics.Color.valueOf;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivityLogin extends AppCompatActivity {
+    private ProgressDialog progressDialog;
+    private FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_login);
+        progressDialog = new ProgressDialog(this);
+        firebaseAuth = FirebaseAuth.getInstance();
+        if(firebaseAuth.getCurrentUser()!=null)
+        {
+            Intent i;
+            i = new Intent(this, MainActivity.class);
+            startActivity(i);
+            finish();
+        }
         RelativeLayout ll1 = (RelativeLayout)findViewById(R.id.ll1);
         EditText username = (EditText) findViewById(R.id.username);
         EditText password = (EditText) findViewById(R.id.passwd);
@@ -91,8 +99,8 @@ public class MainActivityLogin extends AppCompatActivity {
         });
         lgn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                /*String name = user.getText().toString().trim();
+            public void onClick(final View view) {
+                String name = user.getText().toString().trim();
                 String Pass = psswd.getText().toString().trim();
                 if(name.isEmpty()) {
                     user.setError("Please enter your username or email !");
@@ -101,14 +109,27 @@ public class MainActivityLogin extends AppCompatActivity {
                 else if(Pass.isEmpty()) {
                     psswd.setError("Enter password !");
                     psswd.requestFocus();
-                }*/
-                //else
-                //{
-                    Intent i;
-                    i = new Intent(view.getContext(),MainActivity.class);
-                    startActivity(i);
-                    finish();
-                //}
+                }
+                else
+                {
+                    progressDialog.setMessage("Signing In....");
+                    progressDialog.show();
+                    firebaseAuth.signInWithEmailAndPassword(user.getText().toString().trim(),psswd.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                progressDialog.dismiss();
+                                Intent i;
+                                i = new Intent(view.getContext(), MainActivity.class);
+                                startActivity(i);
+                                finish();
+                            } else {
+                                progressDialog.dismiss();
+                                Toast.makeText(MainActivityLogin.this, "Invalid Username Or password !", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
             }
         });
         reg.setOnClickListener(new View.OnClickListener() {
