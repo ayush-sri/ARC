@@ -1,24 +1,29 @@
 package com.example.ayushsrivastava.arc;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AlertDialogLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,24 +31,57 @@ import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static com.example.ayushsrivastava.arc.NetworkStateChangeReciever.IS_NETWORK_AVAILABLE;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth firebaseAuth;
     private TextView username,emailadd;
     private FirebaseAuth.AuthStateListener authStateListener;
-    private String uname,uemail,uid;
+    private String uname,uemail,uid,networkstatus;
+    private Snackbar snackbar,snackbar2;
+    private FrameLayout Layout;
     private Firebase firebase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Layout =(FrameLayout) findViewById(R.id.content_main);
+        IntentFilter intentFilter = new IntentFilter(NetworkStateChangeReciever.NETWORK_AVAILABLE_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean isNetworkAvailable = intent.getBooleanExtra(IS_NETWORK_AVAILABLE,false);
+                networkstatus =isNetworkAvailable?"connected":"disconnected";
+                if (networkstatus.equals("disconnected") ) {
+                    //Toast.makeText(MainActivity.this, "", Toast.LENGTH_LONG).show();
+                    snackbar =Snackbar.make(Layout, "No internet connection", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.show();/*setAction("Retry", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(networkstatus.equals("connected"))
+                                {
+                                    snackbar.dismiss();
+                                    snackbar2 = Snackbar.make(relativeLayout,"Conection Etablished !",Snackbar.LENGTH_LONG);
+                                    ((TextView)snackbar2.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.GREEN);
+                                    snackbar2.show();
+                                }
+                                else if (networkstatus.equals("disconnected"))
+                                    Toast.makeText(getApplicationContext(), "Please check your network !", Toast.LENGTH_SHORT).show();
+                            }
+                        }).setActionTextColor(Color.GREEN).show();*/
+                }
+                else if(networkstatus.equals("connected"))
+                {
+                    snackbar2 = Snackbar.make(Layout,"Connection Established !",Snackbar.LENGTH_LONG);
+                    ((TextView)snackbar2.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.GREEN);
+                    snackbar2.show();
+                    Toast.makeText(MainActivity.this, "Connection Established !", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        },intentFilter);
+
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
         uid=user.getUid();
@@ -78,7 +116,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main,menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -88,7 +126,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             new AlertDialog.Builder(this)
-                    .setTitle("Logout")
+                    .setTitle("Exit")
                     .setMessage("Are you sure you want to Exit? ")
                     .setNegativeButton(android.R.string.no,null)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -108,13 +146,18 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.settings) {
-            Toast.makeText(this, "This is not made yet !", Toast.LENGTH_SHORT).show();
-            return true;
+        switch (id)
+        {
+            case   R.id.subject :
+                openDialogue();
+                break;
+            case   R.id.rename :
+                Toast.makeText(this, "Rename ", Toast.LENGTH_SHORT).show();
+                break;
+            default: break;
         }
 
+        //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
     }
 
@@ -162,10 +205,20 @@ public class MainActivity extends AppCompatActivity
         }
         else if(id == R.id.nav_logout)
         {
-            firebaseAuth.signOut();
-            Intent i = new Intent(this,MainActivityLogin.class);
-            startActivity(i);
-            this.finish();
+            new AlertDialog.Builder(this)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure you want to Logout ? ")
+                    .setNegativeButton(android.R.string.no,null)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            firebaseAuth.signOut();
+                            Intent in = new Intent(getApplicationContext(),MainActivityLogin.class);
+                            startActivity(in);
+                            finish();
+                        }
+                    }).create().show();
+
         }
         return true;
     }
@@ -179,4 +232,8 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
-}
+    public void openDialogue() {
+        editContentAlert alert = new editContentAlert();
+        alert.show(getSupportFragmentManager(), "alert");
+    }
+   }

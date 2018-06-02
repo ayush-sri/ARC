@@ -62,7 +62,7 @@
         android:textSize="14sp"
         android:focusable="true"
         android:paddingLeft="20dp"
-        android:id="@+id/passwd"
+        android:id="@+id/Passwd"
         android:hint="@string/passwd"
         android:textColorHint="#fff"
         android:fontFamily="@font/oswald"
@@ -76,7 +76,7 @@
         android:layout_marginTop="20dp"
         android:textSize="14sp"
         android:paddingLeft="20dp"
-        android:id="@+id/email"
+        android:id="@+id/Email"
         android:hint="@string/Email2"
         android:inputType="textEmailAddress"
         android:textColorHint="#fff"
@@ -149,7 +149,7 @@
         </RelativeLayout>
     </RelativeLayout>
         <Button
-            android:id="@+id/register"
+            android:id="@+id/Register"
             android:layout_width="120dp"
             android:layout_height="42dp"
             android:layout_marginLeft="120dp"

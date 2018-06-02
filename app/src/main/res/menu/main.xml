@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/add"
         android:title="add"
-        android:icon="@drawable/ic_action_name"
-        app:showAsAction="always"/>
-    <item android:id="@+id/settings"
-        android:title="settings"
-        android:icon="@drawable/ic_action_setting"
-        app:showAsAction="always"/>
+        android:icon="@drawable/ic_action_name">
+        <item android:title="Add a Subject" android:id="@+id/subject" />
+        <item android:title="Delete a Subject"/>
+        <item android:title="Rename" android:id="@+id/rename"/>
+    </item>
+
 </menu>

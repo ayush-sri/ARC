@@ -26,6 +26,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class Register extends AppCompatActivity {
@@ -35,29 +40,35 @@ public class Register extends AppCompatActivity {
     private ProgressDialog progessDialogue;
     private CheckBox chkbk;
     private Intent i;
-    private EditText name;
-    Firebase users,password,RollNum,Branchbase,Group,Email,Status;
+    private EditText name,Rollnum,passwd,email;
+    FirebaseDatabase database;
+    private DatabaseReference ref;
+    Users user;
+    Firebase users,Subjects;//password,RollNum,Branchbase,Group,Email,Status;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         progessDialogue = new ProgressDialog(this);
         firebaseAuth=FirebaseAuth.getInstance();
-        i=getIntent();
+        firebaseUser=firebaseAuth.getCurrentUser();
+        database= FirebaseDatabase.getInstance();
+        ref =database.getReference();
+        user=new Users();
         chkbk = (CheckBox)findViewById(R.id.ctvReg);
         users = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Users");
-        Email = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Email");
+       /* Email = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Email");
         password =new Firebase("https://arc-artificial-cr-a.firebaseio.com/Password");
         RollNum = new Firebase("https://arc-artificial-cr-a.firebaseio.com/RollNum");
         Branchbase = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Branch");
         Group = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Group");
-        Status = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Status");
+        Status = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Status");*/
         //final Button register;
         name = (EditText)findViewById(R.id.name);
-        final EditText Rollnum=(EditText)findViewById(R.id.rollNum);
-        final EditText email =(EditText)findViewById(R.id.email);
-        final EditText passwd = (EditText)findViewById(R.id.passwd);
-        register = (Button)findViewById(R.id.register);
+        Rollnum=(EditText)findViewById(R.id.rollNum);
+        email =(EditText)findViewById(R.id.Email);
+        passwd = (EditText)findViewById(R.id.Passwd);
+        register = (Button)findViewById(R.id.Register);
         hideKeyboard(passwd);
         hideKeyboard(name);
         hideKeyboard(Rollnum);
@@ -123,13 +134,16 @@ public class Register extends AppCompatActivity {
 
                         }
                     });
+
                     register.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View view) {
-                            String n = name.getText().toString().trim();
-                            String Pass = passwd.getText().toString().trim();
-                            String Roll = Rollnum.getText().toString().trim();
-                            String em = email.getText().toString().trim();
+                            final boolean cr = CheckStatus();
+                            final String n = name.getText().toString().trim();
+                            final String Pass = passwd.getText().toString().trim();
+                            final String Roll = Rollnum.getText().toString().trim();
+                            final String em = email.getText().toString().trim();
+                            final String sems = semester.getSelectedItem().toString();
                             if(n.isEmpty()) {
                                 name.setError("Please enter your username !");
                                 name.requestFocus();
@@ -137,6 +151,11 @@ public class Register extends AppCompatActivity {
                             else if(Pass.isEmpty()) {
                                 passwd.setError("Enter password !");
                                 passwd.requestFocus();
+                                if (Pass.length() < 8) {
+                                    passwd.setError("Password Should be atleast 8 characters long !");
+                                    passwd.requestFocus();
+                                }
+
                             }
                             else if(Roll.isEmpty())
                             {
@@ -159,46 +178,52 @@ public class Register extends AppCompatActivity {
                             }
                             else {
 
-                                if(Roll.length()<15) {
+                                if (Roll.length() < 15) {
                                     Rollnum.setError("Invalid Roll Number !");
                                     Rollnum.requestFocus();
                                 }
-                                if(Pass.length()<8) {
-                                    passwd.setError("Password Should be atleast 8 characters long !");
-                                    passwd.requestFocus();
-                                }
-                                users.push().setValue(name.getText().toString());
+                               /* users.push().setValue(name.getText().toString());
                                 Email.push().setValue(email.getText().toString());
                                 password.push().setValue(passwd.getText().toString());
                                 RollNum.push().setValue(Rollnum.getText().toString());
                                 Branchbase.push().setValue(Branch.getSelectedItem().toString());
                                 Group.push().setValue(grp.getSelectedItem().toString());
-                                Status.push().setValue(CheckStatus());
-                                progessDialogue.setMessage("Please Wait.....");
-                                progessDialogue.show();
-                                firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), passwd.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if(task.isSuccessful()) {
-                                            progessDialogue.dismiss();
-                                            if(task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                                Toast.makeText(Register.this, "Already Registered !", Toast.LENGTH_SHORT).show();
-                                                return;
+                                Status.push().setValue(CheckStatus());*/
+                                else {
+                                    progessDialogue.show();
+                                    progessDialogue.setMessage("Please wait !");
+                                    firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), passwd.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if(task.isSuccessful()) {
+                                                user.setUname(n);
+                                                user.setuEmail(em);
+                                                user.setRollNum(Roll);
+                                                user.setUpassword(Pass);
+                                                user.setBranchbase(Branch.getSelectedItem().toString());
+                                                user.setuGroup(grp.getSelectedItem().toString());
+                                                user.setSem(sems);
+                                                user.setCr(cr);
+                                                users.push().setValue(user);
+                                                progessDialogue.dismiss();
+                                                Toast.makeText(Register.this, "Registered Successfully !", Toast.LENGTH_LONG).show();
+                                                i = new Intent(view.getContext(),MainActivityLogin.class);
+                                                startActivity(i);
+                                                finish();
                                             }
-                                            Toast.makeText(Register.this, "Registered Successfully !", Toast.LENGTH_LONG).show();
-                                            i = new Intent(view.getContext(),MainActivity.class);
-                                            i.putExtra("username",name.getText().toString().trim());
-                                            i.putExtra("Email",email.getText().toString().trim());
-                                            startActivity(i);
-                                            finish();
-                                        }
-                                        else
-                                        {
-                                            progessDialogue.dismiss();
-                                            Toast.makeText(Register.this, "Some Error Occurred !", Toast.LENGTH_LONG).show();
+                                            else
+                                            {
+                                                progessDialogue.dismiss();
+                                                if(task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                                    Toast.makeText(Register.this, "Already Registered !", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
+                                                Toast.makeText(Register.this, "Some Error Occurred !", Toast.LENGTH_LONG).show();
+                                            }}
+                                    });
+                                }
+                            }
 
-                                    }}
-                                });
 
                                 /*Intent i;
                                 i = new Intent(view.getContext(),MainActivity.class);
@@ -206,9 +231,10 @@ public class Register extends AppCompatActivity {
                                 finish();*/
                             }
 
-                        }
-                    });
-                         }
+                        });
+    }
+
+
     public void hideKeyboard(EditText et) {
         et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -239,11 +265,11 @@ public class Register extends AppCompatActivity {
                     }
                 }).create().show();
     }
-    String CheckStatus()
+    Boolean CheckStatus()
     {
         if(chkbk.isChecked())
-          return name.getText().toString()+" : CR";
-        else return null;
+          return true;
+        else return false;
     }
 
 

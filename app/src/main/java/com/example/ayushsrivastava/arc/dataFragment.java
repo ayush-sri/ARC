@@ -56,12 +56,17 @@ public class dataFragment extends android.support.v4.app.Fragment {
 
         return view;
     }
-    private class sliderAdapter extends FragmentStatePagerAdapter {
-        final String tabs [] = {"BMA 4001 ","BCS 4003","BCS 4016","BCS 4017","BCS 4018","BHU 4018"};
-        public sliderAdapter(FragmentManager fm) {
+    class sliderAdapter extends FragmentStatePagerAdapter {
+        final String tabs [] = {"SUB 1","SUB 2","SUB 3","SUB 4","SUB 5","SUB 6"};
+
+        public String[] getTabs() {
+           return tabs;
+       }
+
+
+       public sliderAdapter(FragmentManager fm) {
             super(fm);
         }
-
         @Override
         public Fragment getItem(int position) {
             return new ContentFragment();
@@ -76,5 +81,6 @@ public class dataFragment extends android.support.v4.app.Fragment {
         {
             return tabs[position];
         }
+
     }
 }
