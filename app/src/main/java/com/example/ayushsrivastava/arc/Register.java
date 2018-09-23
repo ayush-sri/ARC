@@ -6,9 +6,14 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -17,9 +22,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -32,19 +39,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
+
 
 public class Register extends AppCompatActivity {
-    private Button register;
+    private Button register,update;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private ProgressDialog progessDialogue;
     private CheckBox chkbk;
-    private Intent i;
     private EditText name,Rollnum,passwd,email;
     FirebaseDatabase database;
     private DatabaseReference ref;
-    Users user;
-    Firebase users,Subjects;//password,RollNum,Branchbase,Group,Email,Status;
+
+    Firebase users;//password,RollNum,Branchbase,Group,Email,Status;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +62,6 @@ public class Register extends AppCompatActivity {
         firebaseUser=firebaseAuth.getCurrentUser();
         database= FirebaseDatabase.getInstance();
         ref =database.getReference();
-        user=new Users();
         chkbk = (CheckBox)findViewById(R.id.ctvReg);
         users = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Users");
        /* Email = new Firebase("https://arc-artificial-cr-a.firebaseio.com/Email");
@@ -69,6 +76,23 @@ public class Register extends AppCompatActivity {
         email =(EditText)findViewById(R.id.Email);
         passwd = (EditText)findViewById(R.id.Passwd);
         register = (Button)findViewById(R.id.Register);
+        final Button show =(Button)findViewById(R.id.Show);
+        show.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(show.getText().equals("SHOW")){
+                    show.setText("HIDE");
+                    passwd.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    passwd.setSelection(passwd.length());
+                }
+                else if(show.getText().equals("HIDE"))
+                {
+                    show.setText("SHOW");
+                    passwd.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    passwd.setSelection(passwd.length());
+                }
+            }
+        });
         hideKeyboard(passwd);
         hideKeyboard(name);
         hideKeyboard(Rollnum);
@@ -76,7 +100,7 @@ public class Register extends AppCompatActivity {
         final Spinner Branch = (Spinner) findViewById(R.id.branch);
         final Spinner semester = (Spinner) findViewById(R.id.sem);
         final Spinner grp = (Spinner) findViewById(R.id.group);
-        final String[] Brnch = {"Branch", "CSE", "ECE", "Mech", "Civil"};
+        final String[] Brnch = {"Branch", "CSE", "ECE", "ME", "CE","EE"};
         final String[] sem = {"Sem","1", "2", "3", "4", "5", "6", "7", "8"};
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, Brnch);
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, sem);
@@ -134,7 +158,23 @@ public class Register extends AppCompatActivity {
 
                         }
                     });
+                    passwd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
+                    show.setVisibility(View.GONE);
+                } else {
+                    show.setVisibility(View.VISIBLE);
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
                     register.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View view) {
@@ -144,6 +184,9 @@ public class Register extends AppCompatActivity {
                             final String Roll = Rollnum.getText().toString().trim();
                             final String em = email.getText().toString().trim();
                             final String sems = semester.getSelectedItem().toString();
+                            final String branch = Branch.getSelectedItem().toString();
+                            final String group = grp.getSelectedItem().toString();
+                            final String imgurl = "default";
                             if(n.isEmpty()) {
                                 name.setError("Please enter your username !");
                                 name.requestFocus();
@@ -178,7 +221,7 @@ public class Register extends AppCompatActivity {
                             }
                             else {
 
-                                if (Roll.length() < 15) {
+                                if (Roll.length() < 15 ) {
                                     Rollnum.setError("Invalid Roll Number !");
                                     Rollnum.requestFocus();
                                 }
@@ -196,19 +239,22 @@ public class Register extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if(task.isSuccessful()) {
-                                                user.setUname(n);
+                                                Users user = new Users(n,em,group,branch,Roll,Pass,cr,sems,branch+sems,imgurl);
+                                                /*user.setUname(n);
                                                 user.setuEmail(em);
                                                 user.setRollNum(Roll);
                                                 user.setUpassword(Pass);
-                                                user.setBranchbase(Branch.getSelectedItem().toString());
-                                                user.setuGroup(grp.getSelectedItem().toString());
+                                                user.setuBranch(branch);
+                                                user.setuGroup(group);
                                                 user.setSem(sems);
                                                 user.setCr(cr);
-                                                users.push().setValue(user);
+                                                user.setBranch_sem(branch+sems);
+                                                user.setImgurl(imgurl);*/
+                                                users.child(firebaseAuth.getUid()).setValue(user);
                                                 progessDialogue.dismiss();
                                                 Toast.makeText(Register.this, "Registered Successfully !", Toast.LENGTH_LONG).show();
-                                                i = new Intent(view.getContext(),MainActivityLogin.class);
-                                                startActivity(i);
+                                                Intent back = new Intent(view.getContext(),MainActivityLogin.class);
+                                                startActivity(back);
                                                 finish();
                                             }
                                             else

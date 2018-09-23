@@ -58,6 +58,20 @@
         android:inputType="text|textEmailAddress"
         android:textColorHint="#fff" />
 
+    <Button
+        android:id="@+id/show"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/passwd"
+        android:layout_alignTop="@+id/passwd"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@android:color/transparent"
+        android:fontFamily="@font/oswald"
+        android:text="SHOW"
+        android:visibility="invisible"
+        android:textColor="#fff"
+        android:textSize="10sp" />
     <EditText
         android:layout_width="300dp"
         android:layout_height="45dp"
@@ -132,15 +146,5 @@
               android:textSize="16sp" />
 
 
-    <CheckBox
-        android:id="@+id/ctv"
-        style="@android:style/Widget.Holo.Light.CompoundButton.CheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/frgt"
-        android:checked="false"
-        android:fontFamily="@font/oswald"
-        android:text="Login as CR"
-        android:textColor="#fff"/>
       </LinearLayout>
 </RelativeLayout>

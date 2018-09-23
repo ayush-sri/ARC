@@ -7,10 +7,12 @@
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:id="@+id/bgimage"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
 
     <ImageView
         android:id="@+id/imageView"
@@ -24,7 +26,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:id="@+id/username"
-        android:text="Android Studio"
+        android:text="loading...."
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView

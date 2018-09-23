@@ -16,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.View;
@@ -28,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -70,7 +72,7 @@ public class MainActivityLogin extends AppCompatActivity {
                     }
                     else if(networkstatus.equals("connected"))
                     {
-                        snackbar2 = Snackbar.make(relativeLayout,"Conection Etablished !",Snackbar.LENGTH_LONG);
+                        snackbar2 = Snackbar.make(relativeLayout,"Connection Etablished !",Snackbar.LENGTH_LONG);
                         ((TextView)snackbar2.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.GREEN);
                         snackbar2.show();
                     }
@@ -78,6 +80,7 @@ public class MainActivityLogin extends AppCompatActivity {
                 }
         },intentFilter);
         TextView frgtpass = (TextView) findViewById(R.id.frgtpass);
+        final Button show = (Button)findViewById(R.id.show);
         progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
         if(firebaseAuth.getCurrentUser()!=null)
@@ -91,12 +94,27 @@ public class MainActivityLogin extends AppCompatActivity {
         final EditText password = (EditText) findViewById(R.id.passwd);
         Button lgn = (Button) findViewById(R.id.login);
         Button reg = (Button) findViewById(R.id.reg);
-        final CheckBox cr = (CheckBox) findViewById(R.id.ctv);
         username.setCursorVisible(false);
         hideKeyboard(username);
         hideKeyboard(password);
         final EditText psswd = password;
         final EditText user = username;
+        show.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(show.getText().equals("SHOW")){
+                    show.setText("HIDE");
+                    psswd.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    psswd.setSelection(psswd.length());
+                }
+                else if(show.getText().equals("HIDE"))
+                {
+                    show.setText("SHOW");
+                    psswd.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    psswd.setSelection(psswd.length());
+                }
+            }
+        });
         user.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -130,8 +148,10 @@ public class MainActivityLogin extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() == 0) {
+                    show.setVisibility(View.GONE);
                     psswd.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
                 } else {
+                    show.setVisibility(View.VISIBLE);
                     psswd.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
                 }
             }
@@ -163,9 +183,11 @@ public class MainActivityLogin extends AppCompatActivity {
                                     i = new Intent(view.getContext(), MainActivity.class);
                                     startActivity(i);
                                     finish();
-                                } else {
+                                }
+                                else
+                                {
                                     progressDialog.dismiss();
-                                    Toast.makeText(MainActivityLogin.this, "Invalid Username Or password !", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivityLogin.this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();
                                     psswd.setText(null);
                                 }
                             }

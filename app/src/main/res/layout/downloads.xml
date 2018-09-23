@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.v4.widget.NestedScrollView android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".contact"
+    android:isScrollContainer="true"
+    android:scrollbars="vertical"
+    app:layout_scrollFlags="scroll"
+    tools:scrollY="150dp"
+    tools:showIn="@layout/users">
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,13 +20,20 @@
     android:id="@+id/downloads">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:singleLine="true"
-        android:text="No Recent Downloads !"
-        android:textSize="30sp"
-        tools:layout_editor_absoluteX="34dp"
-        tools:layout_editor_absoluteY="217dp"
-        tools:ignore="MissingConstraints" />
-</android.support.constraint.ConstraintLayout>
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:text= "No Recent Downloads !"
+        android:visibility="invisible"
+        android:id="@+id/noDownload"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="180dp"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/downloadedlist"
+        android:divider="#d667cd"
+        android:dividerHeight="2dp"
+        android:nestedScrollingEnabled="true"/>
+</FrameLayout>
+</android.support.v4.widget.NestedScrollView>

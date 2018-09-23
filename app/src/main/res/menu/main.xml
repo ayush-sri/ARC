@@ -4,9 +4,15 @@
     <item android:id="@+id/add"
         android:title="add"
         android:icon="@drawable/ic_action_name">
-        <item android:title="Add a Subject" android:id="@+id/subject" />
-        <item android:title="Delete a Subject"/>
-        <item android:title="Rename" android:id="@+id/rename"/>
+        <item android:title="New Broadcast" android:id="@+id/Notification" />
+        <item android:title="Add or Rename a Subject" android:id="@+id/subject" />
+        <item android:title="Add or Replace notes" android:id="@+id/topic"/>
+        <item android:title="Update Sem" android:id="@+id/update"/>
+        <item android:title="Add Syllabus" android:id="@+id/syllabus"/>
+        <item android:title="Add time table" android:id="@+id/timeTable"/>
+        <item android:title="Update your marks" android:id="@+id/marks"/>
+        <item android:title="Profile" android:id="@+id/profile"/>
+        <item android:title="About" android:id="@+id/abt"/>
     </item>
 
 </menu>
